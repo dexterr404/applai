@@ -1,8 +1,9 @@
-import { Briefcase,Plus } from "lucide-react"
+import { Plus } from "lucide-react"
+import { useUser } from "../../hooks/useUser";
 
 import Button from "../ui/Button";
-import { useUser } from "../../hooks/useUser";
 import UserMenu from "../ui/UserMenu";
+import Logo from "../../assets/applai-logo.svg"
 
 
 type HeaderProps = {
@@ -23,9 +24,7 @@ export default function Header({setIsFormOpen}: HeaderProps) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-2 rounded-lg flex-shrink-0">
-                    <Briefcase className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </div>
+                <img src={Logo} className="size-10"/>
                 <div className="min-w-0">
                     <h1 className="text-lg sm:text-2xl font-bold text-slate-800 truncate text-left">ApplAi</h1>
                     <p className="text-xs sm:text-sm text-slate-500 hidden sm:block text-left">Track smarter, land faster</p>

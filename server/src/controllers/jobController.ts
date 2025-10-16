@@ -11,16 +11,14 @@ export const fetchJobs = async(req: express.Request, res: express.Response) => {
        const { baseQuery, values } = buildJobQuery(status, searchQuery ,userId);
 
         const result = await pool.query(baseQuery, values);
-
         return res.status(200).json(result.rows);
     } catch (error) {
-        console.error("Error in fetching jobs controller", error);
         res.status(500).json("Database error");
     }
 }
 
 export const addJob = async(req: express.Request, res: express.Response) => {
-    const { company, position, status = "Applied", applied_date, salary, location, link } = req.body;
+    const { company, position, status = "Applied", applied_date, salary, location, link, description } = req.body;
     const userId = (req as any).user?.id;
 
     try {
@@ -33,8 +31,8 @@ export const addJob = async(req: express.Request, res: express.Response) => {
         }
         
         const result = await pool.query(
-            'INSERT INTO jobs (company, position, status, applied_date, salary, location, link, user_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8)  RETURNING *',
-            [company, position, status, applied_date, salary, location, link, userId]
+            'INSERT INTO jobs (company, position, status, applied_date, salary, location, link, user_id, description) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)  RETURNING *',
+            [company, position, status, applied_date, salary, location, link, userId, description]
         );
 
         return res.status(201).json(result.rows[0]);
@@ -46,7 +44,7 @@ export const addJob = async(req: express.Request, res: express.Response) => {
 }
 
 export const updateJob = async(req: express.Request, res: express.Response) => {
-    const { id, company, position, status, applied_date, salary, location, link } = req.body;
+    const { id, company, position, status, applied_date, salary, location, link, description } = req.body;
     const userId = (req as any).user?.id;
 
     try {
@@ -63,8 +61,8 @@ export const updateJob = async(req: express.Request, res: express.Response) => {
         }
 
         const result = await pool.query(
-            'UPDATE jobs SET company = $1, position = $2, status = $3, applied_date = $4, salary = $5, location = $6, link = $7 WHERE id = $8 and user_id = $9 RETURNING *',
-            [company, position, status, applied_date, salary, location, link, id, userId]
+            'UPDATE jobs SET company = $1, position = $2, status = $3, applied_date = $4, salary = $5, location = $6, link = $7, description = $8 WHERE id = $9 and user_id = $10 RETURNING *',
+            [company, position, status, applied_date, salary, location, link, description, id, userId]
         );
 
         // Check if job exists or belongs to user

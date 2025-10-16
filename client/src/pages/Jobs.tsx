@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Briefcase, Clock, CheckCircle, TrendingUp, Sparkles } from 'lucide-react';
+import { Briefcase, Clock, CheckCircle, TrendingUp } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { addJob, updateJob } from '../api/jobService';
 import { fetchJobs } from '../api/jobService';
 import { useDebounce } from '../hooks/useDebounce';
 import { useJobStats } from '../hooks/useJobStats';
+import { generateJobInterviewTips } from '../api/aiService';
 import type { Job } from '../types/job';
 
-import Button from '../components/ui/Button';
 import JobCard from '../components/jobs/JobCard';
 import JobForm from '../components/jobs/JobForm';
 import Modal from '../components/ui/Modal';
@@ -15,11 +15,13 @@ import JobsFilter from '../components/jobs/JobsFilter';
 import Header from '../components/layout/Header';
 import EmptyJobsState from '../components/jobs/EmptyJobState';
 
+
 const Jobs = () => {
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [generatingJobId, setGeneratingJobId] = useState<number | null>(null);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
@@ -42,7 +44,18 @@ const Jobs = () => {
 
   const updateJobMutation = useMutation({
     mutationFn: (updatedJob: Partial<Job>) => updateJob(updatedJob),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['jobs']})
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['jobs'] })
+  });
+
+  const generateTipsMutation = useMutation({
+    mutationFn: (job: Partial<Job>) => generateJobInterviewTips(job),
+    onMutate: (job) => {
+      setGeneratingJobId(job.id || null);
+    },
+    onSettled: () => {
+      setGeneratingJobId(null);
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+    },
   });
 
   const { total, inProgress, interviews, offers } = useJobStats(allJobs || []);
@@ -56,10 +69,10 @@ const Jobs = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="max-w-7xl mx-auto max-sm:p-1 min-h-screen bg-gradient-to-br  from-slate-50 to-slate-100">
       {/* Header */}
       <Header setIsFormOpen={setIsFormOpen}/>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+      <div className="max-w-7xl mx-auto py-4 sm:py-8">
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
           {stats.map((stat, index) => (
@@ -73,24 +86,6 @@ const Jobs = () => {
               <div className="text-xs sm:text-sm text-slate-500">{stat.label}</div>
             </div>
           ))}
-        </div>
-
-        {/* AI Insights Banner */}
-        <div className="bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 text-white shadow-lg">
-          <div className="flex items-start gap-3 sm:gap-4">
-            <div className="bg-white/20 p-2 sm:p-3 rounded-lg flex-shrink-0">
-              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-base sm:text-lg mb-2">AI Insights Ready</h3>
-              <p className="text-white/90 text-xs sm:text-sm mb-3">
-                3 applications need follow-up. TechCorp interview is in 2 days - generate prep questions?
-              </p>
-              <Button className='bg-white text-purple-600 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-white/90 transition-colors'>
-                View Recommendations
-              </Button>
-            </div>
-          </div>
         </div>
 
         {/* Filters & Search */}
@@ -113,6 +108,8 @@ const Jobs = () => {
                   setSelectedJob(job);
                   setIsFormOpen(true);
                 }}
+                onGenerate={(job) => generateTipsMutation.mutate(job)}
+                generating={generatingJobId === job.id}
               />
             ))
           )}
@@ -130,7 +127,6 @@ const Jobs = () => {
         <JobForm 
           initialData={selectedJob ?? {}}
           onSubmit={(data) => {
-            console.log("Submitted data", data);
             setIsFormOpen(false);
             setSelectedJob(null);
             if(selectedJob) {

@@ -6,6 +6,8 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToken } from '../hooks/useToken';
 
+import Logo from '../assets/applai-logo.svg'
+
 export default function Login() {
   const navigate = useNavigate();
   const token = useToken();
@@ -45,42 +47,40 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-inherit h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-6xl grid md:grid-cols-2 gap-8 items-center">
         
         {/* Left Side - Branding & Features */}
         <div className="hidden md:block space-y-8">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="bg-indigo-600 rounded-xl p-3">
-                <Briefcase className="w-8 h-8 text-white" />
-              </div>
+              <img src={Logo} className="size-12"/>
               <h1 className="text-3xl font-bold text-gray-900">ApplAi</h1>
             </div>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-gray-600 text-left">
               Organize your job search journey in one place
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 flex flex-col items-start">
             <div className="flex items-start gap-3">
               <CheckCircle2 className="w-6 h-6 text-indigo-600 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="font-semibold text-gray-900">Track Applications</h3>
+                <h3 className="font-semibold text-gray-900 text-left">Track Applications</h3>
                 <p className="text-gray-600">Keep all your job applications organized with status updates</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle2 className="w-6 h-6 text-indigo-600 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="font-semibold text-gray-900">AI Insights</h3>
+                <h3 className="font-semibold text-gray-900 text-left">AI Insights</h3>
                 <p className="text-gray-600">Get intelligent recommendations for your applications</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle2 className="w-6 h-6 text-indigo-600 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="font-semibold text-gray-900">Never Miss a Deadline</h3>
+                <h3 className="font-semibold text-gray-900 text-left">Never Miss a Deadline</h3>
                 <p className="text-gray-600">Stay on top of interviews and follow-ups</p>
               </div>
             </div>

@@ -9,5 +9,6 @@ export type Job = {
   salary: string;
   location: string;
   link: string;
-  aiInsight: string;
+  description:string;
+  ai_insight: string;
 };

@@ -1,5 +1,8 @@
 export function buildJobQuery(status?: string, searchQuery?: string, userId?: number) {
-  let baseQuery = 'SELECT * FROM jobs';
+  let baseQuery = `SELECT jobs.*, job_ai_insights.content AS ai_insight
+                  FROM jobs
+                  LEFT JOIN job_ai_insights
+                  ON jobs.id = job_ai_insights.job_id`;
   const conditions: string[] = [];
   const values: (string | number | null)[] = [];
 

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { User, LogOut } from 'lucide-react';
+
 import Button from './Button';
 import Avatar from './Avatar';
 import Modal from './Modal';
@@ -46,9 +47,6 @@ export default function UserMenu({ user, onLogout }: UserMenuProps) {
             </p>
           </div>
 
-          {/* Divider */}
-          <div className="border-t border-gray-100 my-2"></div>
-
           {/* Logout Button */}
           <Button
             onClick={() => {
@@ -62,20 +60,44 @@ export default function UserMenu({ user, onLogout }: UserMenuProps) {
         </div>
       )}
       <Modal isOpen={isLogoutOpen} onClose={() => setIsLogoutOpen(false)}>
-        <h2 className="font-semibold text-lg py-4">Do you really want to logout?</h2>
-        <div className="flex justify-between items-center py-4">
-            <Button 
-            onClick={() => setIsLogoutOpen(false)}
-            className="bg-blue-600 min-w-24 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-            No
-            </Button>
-            <Button
-            onClick={onLogout}
-            className="bg-red-600 min-w-24 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">
-            Delete
-            </Button>
+      <div className="text-center">
+        {/* Icon */}
+        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
+          <svg className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
         </div>
-      </Modal>
+
+        {/* Title */}
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          Logout Confirmation
+        </h3>
+
+        {/* Description */}
+        <p className="text-sm text-gray-500 mb-6">
+          Are you sure you want to logout? You'll need to sign in again to access your job applications.
+        </p>
+
+        {/* Buttons */}
+        <div className="flex gap-3 justify-end">
+          <Button 
+            onClick={() => setIsLogoutOpen(false)}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={onLogout}
+            className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Logout
+          </Button>
+        </div>
+      </div>
+    </Modal>
     </div>
   );
 }
