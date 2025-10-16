@@ -7,7 +7,7 @@ import type { Job } from "../../types/job";
 import Modal from "../ui/Modal";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteJob } from "../../api/jobService";
+import { deleteJob } from "../../api/tempName";
 import ReactMarkdown from "react-markdown";
 
 type JobCardProps = {
