@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Briefcase, Clock, CheckCircle, TrendingUp } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { addJob, updateJob } from '../api/jobService';
-import { fetchJobs } from '../api/jobService';
+import { addJob, updateJob, fetchJobs } from '../api/jobService';
 import { useDebounce } from '../hooks/useDebounce';
 import { useJobStats } from '../hooks/useJobStats';
 import { generateJobInterviewTips } from '../api/aiService';
