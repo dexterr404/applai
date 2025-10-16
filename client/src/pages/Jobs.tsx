@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Briefcase, Clock, CheckCircle, TrendingUp, Sparkles } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { addJob, updateJob } from '../api/JobService';
-import { fetchJobs } from '../api/JobService';
+import { addJob, updateJob } from '../api/jobService';
+import { fetchJobs } from '../api/jobService';
+import { useDebounce } from '../hooks/useDebounce';
+import { useJobStats } from '../hooks/useJobStats';
 import type { Job } from '../types/job';
 
 import Button from '../components/ui/Button';
@@ -12,7 +14,6 @@ import Modal from '../components/ui/Modal';
 import JobsFilter from '../components/jobs/JobsFilter';
 import Header from '../components/layout/Header';
 import EmptyJobsState from '../components/jobs/EmptyJobState';
-import { useDebounce } from '../hooks/useDebounce';
 
 const Jobs = () => {
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -27,6 +28,11 @@ const Jobs = () => {
     queryFn: () => fetchJobs(selectedStatus,debouncedSearchQuery),
   });
 
+  const { data: allJobs = [] } = useQuery<Job[], Error>({
+    queryKey: ['jobs', 'all'],
+    queryFn: () => fetchJobs('all', ''),
+  });
+
   const queryClient = useQueryClient();
 
   const addJobMutation = useMutation({
@@ -39,20 +45,20 @@ const Jobs = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['jobs']})
   });
 
+  const { total, inProgress, interviews, offers } = useJobStats(allJobs || []);
 
   // Mock data
   const stats = [
-    { label: 'Total Applications', value: 24, icon: Briefcase, color: 'bg-blue-500' },
-    { label: 'In Progress', value: 8, icon: Clock, color: 'bg-yellow-500' },
-    { label: 'Interviews', value: 5, icon: TrendingUp, color: 'bg-purple-500' },
-    { label: 'Offers', value: 2, icon: CheckCircle, color: 'bg-green-500' },
+    { label: 'Total Applications', value: total, icon: Briefcase, color: 'bg-blue-500' },
+    { label: 'In Progress', value: inProgress, icon: Clock, color: 'bg-yellow-500' },
+    { label: 'Interviews', value: interviews, icon: TrendingUp, color: 'bg-purple-500' },
+    { label: 'Offers', value: offers, icon: CheckCircle, color: 'bg-green-500' },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Header */}
       <Header setIsFormOpen={setIsFormOpen}/>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
@@ -91,7 +97,7 @@ const Jobs = () => {
         <JobsFilter setSearchQuery={setSearchQuery} searchQuery={searchQuery} selectedStatus={selectedStatus} setSelectedStatus={setSelectedStatus}/>
 
         {/* Jobs List */}
-        <div className="space-y-3 sm:space-y-4">
+        <div className="space-y-3 pb-20 sm:space-y-4">
           {jobs?.length === 0 ? (
             <EmptyJobsState 
               hasFilters={selectedStatus !== 'all' || !!searchQuery}

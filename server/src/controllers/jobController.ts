@@ -1,34 +1,16 @@
 import express from "express"
 import pool from "../config/db.ts";
+import { buildJobQuery } from "../utils/buildJobQuery.ts";
 
 export const fetchJobs = async(req: express.Request, res: express.Response) => {
     const status = req.query.status as string | undefined;
     const searchQuery = req.query.searchQuery as string | undefined;
+    const userId = (req as any).user?.id;
 
     try {
-        let baseQuery = 'SELECT * FROM jobs';
-        const conditions: string[] = [];
-        const values: string[] = [];
-
-        //Filter by status
-        if(status && status !== 'all') {
-            values.push(status);
-            conditions.push(`status = $${values.length}`);
-        }
-
-        //Filter by searchQuery (company or position)
-        if(searchQuery) {
-            values.push(`%${searchQuery}%`);
-            conditions.push(`(company ILIKE $${values.length} OR position ILIKE $${values.length})`);
-        }
-        
-        //Add where clause if needed
-        if(conditions.length > 0) {
-            baseQuery += ' WHERE ' + conditions.join(' AND ');
-        }
+       const { baseQuery, values } = buildJobQuery(status, searchQuery ,userId);
 
         const result = await pool.query(baseQuery, values);
-        console.log(result.rows);
 
         return res.status(200).json(result.rows);
     } catch (error) {
@@ -38,12 +20,21 @@ export const fetchJobs = async(req: express.Request, res: express.Response) => {
 }
 
 export const addJob = async(req: express.Request, res: express.Response) => {
-    const { company, position, status = "Applied", appliedDate, salary, location, link } = req.body;
+    const { company, position, status = "Applied", applied_date, salary, location, link } = req.body;
+    const userId = (req as any).user?.id;
 
     try {
+        if (!userId) {
+            return res.status(401).json({ message: "Unauthorized: user not found in token" });
+        }
+
+        if (!company || !position) {
+            return res.status(400).json({ message: "Company and position are required" });
+        }
+        
         const result = await pool.query(
-            'INSERT INTO jobs (company, position, status, appliedDate, salary, location, link) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-            [company, position, status, appliedDate, salary, location, link]
+            'INSERT INTO jobs (company, position, status, applied_date, salary, location, link, user_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8)  RETURNING *',
+            [company, position, status, applied_date, salary, location, link, userId]
         );
 
         return res.status(201).json(result.rows[0]);
@@ -55,13 +46,31 @@ export const addJob = async(req: express.Request, res: express.Response) => {
 }
 
 export const updateJob = async(req: express.Request, res: express.Response) => {
-    const { id, company, position, status, appliedDate, salary, location, link } = req.body;
+    const { id, company, position, status, applied_date, salary, location, link } = req.body;
+    const userId = (req as any).user?.id;
 
     try {
+        if (!userId) {
+            return res.status(401).json({ message: "Unauthorized: user not found in token" });
+        }
+
+        if (!id) {
+            return res.status(400).json({ message: "Job ID is required" });
+        }
+
+        if (!company || !position) {
+            return res.status(400).json({ message: "Company and position are required" });
+        }
+
         const result = await pool.query(
-            'UPDATE jobs SET company = $1, position = $2, status = $3, appliedDate = $4, salary = $5, location = $6, link = $7 WHERE id = $8 RETURNING *',
-            [company, position, status, appliedDate, salary, location, link,  id]
+            'UPDATE jobs SET company = $1, position = $2, status = $3, applied_date = $4, salary = $5, location = $6, link = $7 WHERE id = $8 and user_id = $9 RETURNING *',
+            [company, position, status, applied_date, salary, location, link, id, userId]
         );
+
+        // Check if job exists or belongs to user
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Job not found or not authorized to update" });
+        }
 
         return res.status(201).json(result.rows[0]);
     } catch (error) {
@@ -72,14 +81,23 @@ export const updateJob = async(req: express.Request, res: express.Response) => {
 
 export const deleteJob = async(req: express.Request, res: express.Response) => {
     const { jobId } = req.params;
+    const userId = (req as any).user?.id;
 
     try {
-        await pool.query(
-            'DELETE FROM jobs WHERE id = $1',
-            [jobId]
+        if (!userId) {
+            return res.status(401).json({ message: "Unauthorized: user not found in token" });
+        }
+
+        const result = await pool.query(
+            'DELETE FROM jobs WHERE id = $1 AND user_id = $2',
+            [jobId, userId]
         );
 
-        return res.status(200).json({ message: "Job Deleted" });
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Job not found or not authorized to delete" });
+        }
+
+        return res.status(200).json({ message: "Job deleted successfully" });
     } catch (error) {
         console.error("Error in deleting job controller", error);
         res.status(500).send('Database error');

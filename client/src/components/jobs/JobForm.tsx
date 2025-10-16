@@ -55,9 +55,9 @@ export default function JobForm({initialData = {}, onSubmit, submitLabel = "Save
             />
             <input
                 type="date"
-                name="appliedDate"
+                name="applied_date"
                 placeholder="Applied Date"
-                value={formData.applieddate || ""}
+                value={formData.applied_date ? new Date(formData.applied_date).toISOString().split("T")[0] : ""}
                 onChange={handleChange}
                 className="border p-2 rounded"
             />

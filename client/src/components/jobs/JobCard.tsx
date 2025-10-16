@@ -7,7 +7,7 @@ import type { Job } from "../../types/job";
 import Modal from "../ui/Modal";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteJob } from "../../api/JobService";
+import { deleteJob } from "../../api/jobService";
 
 type JobCardProps = {
   job: Job;
@@ -40,11 +40,11 @@ export default function JobCard({job, onEdit}: JobCardProps) {
                     <h3 className="text-xl font-semibold text-slate-800 text-left">{job.position}</h3>
                     <Chip label={job.status} className={`px-3 py-1 rounded-full text-xs font-medium border ${statusColors[job.status]}`}/>
                   </div>
-                  <p className="text-slate-600 font-medium mb-1 max-sm:text-left">{job.company}</p>
+                  <p className="text-slate-600 font-medium text-lg mb-1 max-sm:text-left">{job.company}</p>
                   <div className="flex items-center max-sm:flex-col max-sm:items-start max-sm:mt-4 flex-wrap gap-4 text-sm text-slate-500">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      Applied {job.applieddate}
+                      Applied {new Date(job.applied_date).toLocaleDateString()}
                     </span>
                     <span>{job.location}</span>
                     <span className="font-medium text-slate-700">{job.salary}</span>

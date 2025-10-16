@@ -5,7 +5,7 @@ export type Job = {
   company: string;
   position: string;
   status: JobStatus;
-  applieddate: string;
+  applied_date: string;
   salary: string;
   location: string;
   link: string;
