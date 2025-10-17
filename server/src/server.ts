@@ -11,9 +11,19 @@ dotenv.config();
 
 const app = express();
 
+console.log('APP_BASE_URL:', process.env.APP_BASE_URL);
+
 app.use(cors({
-    origin: ["http://localhost:5173",process.env.APP_BASE_URL!]
+    origin: [
+        "http://localhost:5173",
+        process.env.APP_BASE_URL!,
+        "https://applai-seven.vercel.app"
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 
 app.use(express.json());
 
