@@ -3,6 +3,7 @@ import { statusColors } from "../../data/statusColors";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteJob } from "../../api/jobService";
+import { getCurrencySymbol } from "../../utils/getCurrencySymbol";
 import type { Job } from "../../types/job";
 
 import Button from "../ui/Button"
@@ -72,7 +73,7 @@ export default function JobCard({job, onEdit, onGenerate, generating}: JobCardPr
                 <span className="flex items-center gap-1">
                   <HandCoins className="w-4 h-4"/>
                   <span>
-                    {job.salary?.trim() ? <span className="text-gray-700">{job.salary}</span> : <span className="text-gray-400 italic">Not provided</span>}
+                    {job.salary?.trim() ? <span className="text-gray-700">{job.currency ? `${getCurrencySymbol(job.currency)}` : ""}{job.salary}</span> : <span className="text-gray-400 italic">Not provided</span>}
                   </span>
                 </span>
               </div>
@@ -80,6 +81,7 @@ export default function JobCard({job, onEdit, onGenerate, generating}: JobCardPr
             <Button 
             onClick={() => setIsDeleteOpen(true)}
             disabled={loading}
+            title="Delete job"
             icon={Trash} iconSize={16} className="bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors p-2"/>
           </div>
 

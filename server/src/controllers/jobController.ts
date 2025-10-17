@@ -21,7 +21,7 @@ export const fetchJobs = async(req: express.Request, res: express.Response) => {
 }
 
 export const addJob = async(req: express.Request, res: express.Response) => {
-    const { company, position, status = "Applied", applied_date, salary, location, link, description } = req.body;
+    const { company, position, status = "Applied", applied_date, salary, location, link, description, currency } = req.body;
     const userId = (req as any).user?.id;
 
     try {
@@ -34,8 +34,8 @@ export const addJob = async(req: express.Request, res: express.Response) => {
         }
         
         const result = await pool.query(
-            'INSERT INTO jobs (company, position, status, applied_date, salary, location, link, user_id, description) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)  RETURNING *',
-            [company, position, status, applied_date, salary, location, link, userId, description]
+            'INSERT INTO jobs (company, position, status, applied_date, salary, location, link, user_id, description, currency) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)  RETURNING *',
+            [company, position, status, applied_date, salary, location, link, userId, description, currency]
         );
 
         return res.status(201).json(result.rows[0]);
@@ -47,7 +47,7 @@ export const addJob = async(req: express.Request, res: express.Response) => {
 }
 
 export const updateJob = async(req: express.Request, res: express.Response) => {
-    const { id, company, position, status, applied_date, salary, location, link, description } = req.body;
+    const { id, company, position, status, applied_date, salary, location, link, description, currency } = req.body;
     const userId = (req as any).user?.id;
 
     try {
@@ -64,8 +64,8 @@ export const updateJob = async(req: express.Request, res: express.Response) => {
         }
 
         const result = await pool.query(
-            'UPDATE jobs SET company = $1, position = $2, status = $3, applied_date = $4, salary = $5, location = $6, link = $7, description = $8 WHERE id = $9 and user_id = $10 RETURNING *',
-            [company, position, status, applied_date, salary, location, link, description, id, userId]
+            'UPDATE jobs SET company = $1, position = $2, status = $3, applied_date = $4, salary = $5, location = $6, link = $7, description = $8, currency = $9 WHERE id = $10 and user_id = $11 RETURNING *',
+            [company, position, status, applied_date, salary, location, link, description, currency, id, userId]
         );
 
         // Check if job exists or belongs to user

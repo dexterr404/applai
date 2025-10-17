@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { Briefcase, MapPin, Calendar, Link2, FileText, Building2 } from "lucide-react";
 import type { Job } from "../../types/job"
-import { Briefcase, MapPin, DollarSign, Calendar, Link2, FileText, Building2 } from "lucide-react";
+
 
 import Button from "../ui/Button";
 import Select from "../ui/Select";
+import SalaryInput from "./JobSalaryInput";
 
 
 type JobFormProps = {
@@ -20,7 +22,7 @@ export default function JobForm({initialData = {}, onSubmit, submitLabel = "Save
         setFormData((prev) => ({...prev, [name]: value}))
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const today = new Date();
@@ -28,9 +30,16 @@ export default function JobForm({initialData = {}, onSubmit, submitLabel = "Save
             .toISOString()
             .split("T")[0];
 
+            let formattedSalary = formData.salary?.trim() || "";
+
+            // Remove dangling dash, trailing spaces,
+            formattedSalary = formattedSalary.replace(/-\s*$/, "");
+            formattedSalary = formattedSalary.replace(/^\s*-\s*/, "");
+
             const formattedFormData = {
             ...formData,
             applied_date: formData.applied_date || localDate,
+            salary: formattedSalary, 
             };
 
             onSubmit(formattedFormData);
@@ -109,24 +118,21 @@ export default function JobForm({initialData = {}, onSubmit, submitLabel = "Save
             </div>
         </div>
 
-        {/* Salary & Location */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Salary</label>
-                <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                        name="salary"
-                        placeholder="e.g. $80,000 - $120,000"
-                        value={formData.salary || ""}
-                        onChange={handleChange}
-                        pattern="^\$?[0-9,.]+(\s*-\s*\$?[0-9,.]+)?$"
-                        title="Enter a valid salary (numbers, $, commas, point, and optional range)"
-                        className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-                    />
-                </div>
-            </div>
+        {/* Salary */}
+        <SalaryInput
+        salary={formData.salary || ""}
+        currency={formData.currency || "USD"}
+        onSalaryChange={(salary) => {
+            const regex = /^[0-9,]*\s*(-?\s*[0-9,]*)?$/;
+            if (salary === "" || regex.test(salary)) {
+            setFormData((prev) => ({ ...prev, salary }));
+            }
+        }}
+        onCurrencyChange={(currency) => setFormData((prev) => ({ ...prev, currency }))}
+        />
 
+        {/* Location */}
+        <div className="grid grid-cols-1 gap-4">
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Location</label>
                 <div className="relative">

@@ -12,6 +12,7 @@ export type Job = {
   description:string;
   ai_insight: string;
   resume_url: string;
+  currency: string;
 };
 
 export type JobSortField = 'company' | 'position' | 'salary' | 'applied_date';

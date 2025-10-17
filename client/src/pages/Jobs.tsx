@@ -14,6 +14,7 @@ import JobsFilter from '../components/jobs/JobsFilter';
 import Header from '../components/layout/Header';
 import EmptyJobsState from '../components/jobs/EmptyJobState';
 import JobSort from '../components/common/JobSort';
+import JobCardSkeleton from '../components/jobs/JobCardSkeleton';
 
 
 const Jobs = () => {
@@ -27,7 +28,7 @@ const Jobs = () => {
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  const { data: jobs } = useQuery<Job[], Error>({
+  const { data: jobs, isLoading } = useQuery<Job[], Error>({
     queryKey: ['jobs', selectedStatus, debouncedSearchQuery, sortField, sortOrder],
     queryFn: () => fetchJobs(selectedStatus,debouncedSearchQuery, sortField, sortOrder),
   });
@@ -107,7 +108,10 @@ const Jobs = () => {
 
         {/* Jobs List */}
         <div className="space-y-3 pb-20 sm:space-y-4">
-          {jobs?.length === 0 ? (
+          {isLoading ? (
+            // Show multiple skeletons while loading
+            Array.from({ length: 4 }).map((_, i) => <JobCardSkeleton key={i} />)
+          ) : jobs?.length === 0 ? (
             <EmptyJobsState 
               hasFilters={selectedStatus !== 'all' || !!searchQuery}
               filterType={selectedStatus !== 'all' ? 'status' : searchQuery ? 'search' : ''}
@@ -117,7 +121,7 @@ const Jobs = () => {
             jobs?.map((job) => (
               <JobCard
                 key={job.id}
-                job={job} 
+                job={job}
                 onEdit={(job) => {
                   setSelectedJob(job);
                   setIsFormOpen(true);
