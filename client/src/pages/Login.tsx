@@ -14,7 +14,7 @@ export default function Login() {
   const { data: user, isLoading } = useUser();
 
   useEffect(() => {
-    if (!isLoading && (token || user)) {
+    if (!isLoading && user) {
       navigate("/", { replace: true });
     }
   }, [token, user, isLoading, navigate]);

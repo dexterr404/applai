@@ -13,7 +13,7 @@ import Modal from '../components/ui/Modal';
 import JobsFilter from '../components/jobs/JobsFilter';
 import Header from '../components/layout/Header';
 import EmptyJobsState from '../components/jobs/EmptyJobState';
-import JobSort from '../components/common/JobSort';
+import JobSort from '../components/jobs/JobSort';
 import JobCardSkeleton from '../components/jobs/JobCardSkeleton';
 
 

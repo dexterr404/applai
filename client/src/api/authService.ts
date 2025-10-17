@@ -22,6 +22,11 @@ export async function getUser(token: string) {
         )
         return res.data;
     } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "/login";
+        }
         console.log("Error in fetching user", error);
     }
 }
