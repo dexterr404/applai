@@ -1,7 +1,7 @@
 import Button from "../ui/Button"
 import Chip from "../ui/Chip"
 
-import { Calendar,ExternalLink,Sparkles,Trash,MapPin, HandCoins, BriefcaseBusiness, Building2 } from "lucide-react"
+import { Calendar,ExternalLink,Sparkles,Trash,MapPin, HandCoins, BriefcaseBusiness, Building2, Pencil, Pen } from "lucide-react"
 import { statusColors } from "../../data/statusColors";
 import type { Job } from "../../types/job";
 import Modal from "../ui/Modal";
@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteJob } from "../../api/jobService";
 import ReactMarkdown from "react-markdown";
+import ResumeUpload from "../common/ResumeUpload";
 
 type JobCardProps = {
   job: Job;
@@ -73,7 +74,7 @@ export default function JobCard({job, onEdit, onGenerate, generating}: JobCardPr
             </div>
             <Button 
             onClick={() => setIsDeleteOpen(true)}
-            icon={Trash} iconSize={16} className="text-white bg-red-500 hover:bg-red-600 p-2 rounded-md"/>
+            icon={Trash} iconSize={16} className=" bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors p-2"/>
           </div>
 
           {/* AI Insight */}
@@ -177,9 +178,17 @@ export default function JobCard({job, onEdit, onGenerate, generating}: JobCardPr
                 </>
               )}
             </Button>
-            <Button  onClick={() => onEdit(job)} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-              Edit
-            </Button>
+            <div className="flex items-center gap-2">
+              <ResumeUpload job={job}/>
+              <Button
+                onClick={() => onEdit(job)}
+                className="flex items-center justify-center w-9 h-9 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors cursor-pointer max-sm:flex-1"
+                title="Edit job"
+                icon={Pencil}
+                iconSize={16}
+              >
+              </Button>
+            </div>
           </div>
           <Modal isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)}>
             <div className="text-center">

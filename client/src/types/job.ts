@@ -11,4 +11,5 @@ export type Job = {
   link: string;
   description:string;
   ai_insight: string;
+  resume_url: string;
 };

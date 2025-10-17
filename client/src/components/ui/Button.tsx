@@ -1,4 +1,4 @@
-import { type LucideIcon } from "lucide-react"
+import { type LucideIcon } from "lucide-react";
 
 type ButtonProps = {
     children?: React.ReactNode;
@@ -8,16 +8,28 @@ type ButtonProps = {
     onClick?: () => void;
     type?: "button" | "submit";
     disabled?: boolean;
+    title?: string; // <-- Add this
 }
 
-export default function Button({children,icon:Icon,className,iconSize,onClick,type = "button",disabled = false}: ButtonProps) {
-    return(
+export default function Button({
+    children,
+    icon: Icon,
+    className,
+    iconSize,
+    onClick,
+    type = "button",
+    disabled = false,
+    title,
+}: ButtonProps) {
+    return (
         <button
-        disabled={disabled}
-        type={type}
-        onClick={onClick}
-        className={`${disabled ? "" : "cursor-pointer"} ${className}`}>
-            { Icon && <Icon size={iconSize}/>}
+            disabled={disabled}
+            type={type}
+            onClick={onClick}
+            title={title} // <-- Add title here
+            className={`${disabled ? "" : "cursor-pointer"} ${className}`}
+        >
+            {Icon && <Icon size={iconSize} />}
             {children}
         </button>
     )
