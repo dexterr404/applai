@@ -8,7 +8,7 @@ type ButtonProps = {
     onClick?: () => void;
     type?: "button" | "submit";
     disabled?: boolean;
-    title?: string; // <-- Add this
+    title?: string;
 }
 
 export default function Button({

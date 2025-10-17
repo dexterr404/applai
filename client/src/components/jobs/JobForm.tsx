@@ -20,7 +20,7 @@ export default function JobForm({initialData = {}, onSubmit, submitLabel = "Save
         setFormData((prev) => ({...prev, [name]: value}))
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const today = new Date();
@@ -120,6 +120,8 @@ export default function JobForm({initialData = {}, onSubmit, submitLabel = "Save
                         placeholder="e.g. $80,000 - $120,000"
                         value={formData.salary || ""}
                         onChange={handleChange}
+                        pattern="^\$?[0-9,.]+(\s*-\s*\$?[0-9,.]+)?$"
+                        title="Enter a valid salary (numbers, $, commas, point, and optional range)"
                         className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
                     />
                 </div>

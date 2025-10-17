@@ -5,7 +5,7 @@ import { addJob, updateJob, fetchJobs } from '../api/jobService';
 import { useDebounce } from '../hooks/useDebounce';
 import { useJobStats } from '../hooks/useJobStats';
 import { generateJobInterviewTips } from '../api/aiService';
-import type { Job } from '../types/job';
+import type { Job, JobSortField, JobSortOrder } from '../types/job';
 
 import JobCard from '../components/jobs/JobCard';
 import JobForm from '../components/jobs/JobForm';
@@ -13,6 +13,7 @@ import Modal from '../components/ui/Modal';
 import JobsFilter from '../components/jobs/JobsFilter';
 import Header from '../components/layout/Header';
 import EmptyJobsState from '../components/jobs/EmptyJobState';
+import JobSort from '../components/common/JobSort';
 
 
 const Jobs = () => {
@@ -21,12 +22,14 @@ const Jobs = () => {
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [generatingJobId, setGeneratingJobId] = useState<number | null>(null);
+  const [sortField, setSortField] = useState<JobSortField>('applied_date');
+  const [sortOrder, setSortOrder] = useState<JobSortOrder>('desc');
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   const { data: jobs } = useQuery<Job[], Error>({
-    queryKey: ['jobs', selectedStatus, debouncedSearchQuery],
-    queryFn: () => fetchJobs(selectedStatus,debouncedSearchQuery),
+    queryKey: ['jobs', selectedStatus, debouncedSearchQuery, sortField, sortOrder],
+    queryFn: () => fetchJobs(selectedStatus,debouncedSearchQuery, sortField, sortOrder),
   });
 
   const { data: allJobs = [] } = useQuery<Job[], Error>({
@@ -67,6 +70,15 @@ const Jobs = () => {
     { label: 'Offers', value: offers, icon: CheckCircle, color: 'bg-green-500' },
   ];
 
+  const handleSort = (field: JobSortField) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto max-sm:p-1 min-h-screen bg-gradient-to-br  from-slate-50 to-slate-100">
       {/* Header */}
@@ -89,6 +101,9 @@ const Jobs = () => {
 
         {/* Filters & Search */}
         <JobsFilter setSearchQuery={setSearchQuery} searchQuery={searchQuery} selectedStatus={selectedStatus} setSelectedStatus={setSelectedStatus}/>
+        <JobSort sortField={sortField}
+        sortOrder={sortOrder}
+        onSort={handleSort}/>
 
         {/* Jobs List */}
         <div className="space-y-3 pb-20 sm:space-y-4">

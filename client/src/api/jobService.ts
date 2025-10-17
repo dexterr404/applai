@@ -2,11 +2,19 @@ import axios from "axios";
 import type{ Job } from "../types/job";
 import { useToken } from "../hooks/useToken";
 
-export async function fetchJobs(selectedStatus: string,searchQuery: string) {
+export async function fetchJobs(
+    selectedStatus: string, 
+    searchQuery: string, 
+    sortField: string = 
+    "applied_date", 
+    sortOrder: string = "desc"
+) {
     const token = useToken();
     const searchParam = searchQuery ? `${encodeURIComponent(searchQuery)}` : "";
+    const sort = sortField ? `${encodeURIComponent(sortField)}` : "";
+    const order = sortOrder ? `${encodeURIComponent(sortOrder)}` : "";
     try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/jobs/all?status=${selectedStatus}&searchQuery=${searchParam}`,
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/jobs/all?status=${selectedStatus}&searchQuery=${searchParam}&sort=${sort}&order=${order}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`

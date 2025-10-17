@@ -1,15 +1,15 @@
-import Button from "../ui/Button"
-import Chip from "../ui/Chip"
-
-import { Calendar,ExternalLink,Sparkles,Trash,MapPin, HandCoins, BriefcaseBusiness, Building2, Pencil, Pen } from "lucide-react"
+import { Calendar,ExternalLink,Sparkles,Trash,MapPin, HandCoins, BriefcaseBusiness, Building2, Pencil } from "lucide-react"
 import { statusColors } from "../../data/statusColors";
-import type { Job } from "../../types/job";
-import Modal from "../ui/Modal";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteJob } from "../../api/jobService";
+import type { Job } from "../../types/job";
+
+import Button from "../ui/Button"
+import Chip from "../ui/Chip"
 import ReactMarkdown from "react-markdown";
 import ResumeUpload from "../common/ResumeUpload";
+import Modal from "../ui/Modal";
 
 type JobCardProps = {
   job: Job;
@@ -20,8 +20,9 @@ type JobCardProps = {
 
 export default function JobCard({job, onEdit, onGenerate, generating}: JobCardProps) {
     const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
-    const [expanded, setExpanded] = useState(false);
-
+    const [expanded, setExpanded] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
+ 
     const queryClient = useQueryClient();
 
     const deleteJobMutation = useMutation({
@@ -29,13 +30,17 @@ export default function JobCard({job, onEdit, onGenerate, generating}: JobCardPr
       onSuccess: () => queryClient.invalidateQueries({ queryKey: ['jobs']})
     });
 
-    const handleDelete = async() => {
+    const handleDelete = async () => {
       try {
-        deleteJobMutation.mutate(job.id);
+        setLoading(true);
+        await deleteJobMutation.mutateAsync(job.id);
       } catch (error) {
         console.log("Error deleting job", error);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+
 
     return (
         <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-all group">
@@ -74,7 +79,8 @@ export default function JobCard({job, onEdit, onGenerate, generating}: JobCardPr
             </div>
             <Button 
             onClick={() => setIsDeleteOpen(true)}
-            icon={Trash} iconSize={16} className=" bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors p-2"/>
+            disabled={loading}
+            icon={Trash} iconSize={16} className="bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors p-2"/>
           </div>
 
           {/* AI Insight */}
@@ -219,7 +225,8 @@ export default function JobCard({job, onEdit, onGenerate, generating}: JobCardPr
                 </Button>
                 <Button
                   onClick={handleDelete}
-                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+                  disabled={loading}
+                  className={`px-4 py-2 text-sm font-medium text-white ${loading ? "opacity-80" : "hover:bg-red-700 transition-colors"} bg-red-600 rounded-lg`}
                 >
                   Delete
                 </Button>

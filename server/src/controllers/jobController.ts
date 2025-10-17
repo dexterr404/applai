@@ -5,15 +5,18 @@ import { buildJobQuery } from "../utils/buildJobQuery.ts";
 export const fetchJobs = async(req: express.Request, res: express.Response) => {
     const status = req.query.status as string | undefined;
     const searchQuery = req.query.searchQuery as string | undefined;
+    const sort = req.query.sort as string | undefined;
+    const order = req.query.order as string | undefined;
     const userId = (req as any).user?.id;
 
     try {
-       const { baseQuery, values } = buildJobQuery(status, searchQuery ,userId);
+       const { baseQuery, values } = buildJobQuery(status, searchQuery, sort, order, userId);
 
         const result = await pool.query(baseQuery, values);
         return res.status(200).json(result.rows);
     } catch (error) {
         res.status(500).json("Database error");
+        console.log("Error fetching jobs", error);
     }
 }
 

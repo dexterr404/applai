@@ -13,3 +13,6 @@ export type Job = {
   ai_insight: string;
   resume_url: string;
 };
+
+export type JobSortField = 'company' | 'position' | 'salary' | 'applied_date';
+export type JobSortOrder = 'asc' | 'desc';
