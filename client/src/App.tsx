@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import JobTrackerDashboard from './pages/Jobs'
 import Login from './pages/Login';
+import NotFound from './pages/NotFound';
 
 import ProtectedRoute from './routes/ProtectedRoute';
 import { useToken } from './hooks/useToken';
@@ -17,6 +18,7 @@ function App() {
       <Routes>
         <Route path='/' element={<ProtectedRoute token={token}><JobTrackerDashboard /></ProtectedRoute>}/>
         <Route path='/login' element={<Login />}/>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </QueryClientProvider>
   )
