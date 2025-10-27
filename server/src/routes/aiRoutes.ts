@@ -1,6 +1,6 @@
 import express from "express"
-import { generateJobInterviewTips } from "../controllers/aiController.ts";
-import { protect } from "../middlewares/authMiddleware.ts";
+import { generateJobInterviewTips } from "../controllers/aiController";
+import { protect } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 

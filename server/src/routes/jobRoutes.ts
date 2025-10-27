@@ -1,6 +1,6 @@
 import express from "express"
-import { addJob, deleteJob, fetchJobs, updateJob } from "../controllers/jobController.ts";
-import { protect } from "../middlewares/authMiddleware.ts";
+import { addJob, deleteJob, fetchJobs, updateJob } from "../controllers/jobController";
+import { protect } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 

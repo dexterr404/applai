@@ -1,6 +1,6 @@
 import express from 'express'
-import { uploadResumetoCloudinary } from '../services/resumeService.ts';
-import pool from '../config/db.ts';
+import { uploadResumetoCloudinary } from '../services/resumeService';
+import pool from '../config/db';
 
 export const uploadResume = async(req: express.Request, res: express.Response) => {
     try {

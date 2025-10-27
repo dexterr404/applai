@@ -2,10 +2,10 @@ import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
 
-import jobRoutes from "./routes/jobRoutes.ts"
-import authRoutes from "./routes/authRoutes.ts"
-import aiRoutes from "./routes/aiRoutes.ts"
-import resumeRoutes from "./routes/resumeRoutes.ts"
+import jobRoutes from "./routes/jobRoutes"
+import authRoutes from "./routes/authRoutes"
+import aiRoutes from "./routes/aiRoutes"
+import resumeRoutes from "./routes/resumeRoutes"
 
 dotenv.config();
 

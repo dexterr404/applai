@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken"
-import pool from "../config/db.ts"
+import pool from "../config/db"
 import dotenv from "dotenv"
 
 dotenv.config();

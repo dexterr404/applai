@@ -1,4 +1,4 @@
-import cloudinary from "../config/cloudinary.ts";
+import cloudinary from "../config/cloudinary";
 
 export function uploadResumetoCloudinary(fileBuffer: Buffer, filename: string): Promise<string> {
   return new Promise((resolve, reject) => {

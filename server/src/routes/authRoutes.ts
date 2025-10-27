@@ -1,6 +1,6 @@
 import express from "express"
-import { getUser, googleAuth } from "../controllers/authController.ts";
-import { protect } from "../middlewares/authMiddleware.ts";
+import { getUser, googleAuth } from "../controllers/authController";
+import { protect } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 

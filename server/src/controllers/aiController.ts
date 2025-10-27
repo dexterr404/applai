@@ -1,5 +1,5 @@
-import pool from '../config/db.ts';
-import { openAiClient } from '../services/openAiService.ts'
+import pool from '../config/db';
+import { openAiClient } from '../services/openAiService'
 import express from "express"
 
 export const generateJobInterviewTips = async(req: express.Request, res: express.Response) => {

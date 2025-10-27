@@ -9,7 +9,7 @@ export default function Modal({ isOpen, onClose, title, children}: ModalProps) {
     if(!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50">
             {/* Modal Content */}
             <div className="bg-white max-h-[80vh] overflow-y-auto rounded-2xl shadow-lg w-full max-w-lg p-6 relative animate-fadeIn">
                 {/* Close Button */}

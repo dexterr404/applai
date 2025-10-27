@@ -1,6 +1,6 @@
 import express from "express"
-import pool from "../config/db.ts";
-import { buildJobQuery } from "../utils/buildJobQuery.ts";
+import pool from "../config/db";
+import { buildJobQuery } from "../utils/buildJobQuery";
 
 export const fetchJobs = async(req: express.Request, res: express.Response) => {
     const status = req.query.status as string | undefined;

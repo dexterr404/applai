@@ -1,7 +1,7 @@
 import express from "express"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
-import pool from "../config/db.ts"
+import pool from "../config/db"
 
 import { OAuth2Client } from "google-auth-library"
 

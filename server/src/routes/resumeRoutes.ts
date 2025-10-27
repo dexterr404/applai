@@ -1,7 +1,7 @@
 import express from 'express'
-import { removeResume, uploadResume } from '../controllers/resumeController.ts';
-import { uploadPDF } from '../middlewares/uploadResume.ts';
-import { protect } from '../middlewares/authMiddleware.ts';
+import { removeResume, uploadResume } from '../controllers/resumeController';
+import { uploadPDF } from '../middlewares/uploadResume';
+import { protect } from '../middlewares/authMiddleware';
 
 const router = express.Router();
 
